@@ -61,7 +61,6 @@ class TrainingPipelineConfig():
         # datetime object → "08_24_2026_14_32_00"
         # %m = month, %d = day, %Y = year, %H = hour, %M = minute, %S = second
         timestamp = timestamp.strftime("%m_%d_%Y_%H_%M_%S")
-        # BUG FIXED: tumhara "$S" tha → "%S" hona chahiye
 
         self.pipeline_name = training_pipeline.PIPELINE_NAME
         # → "NetworkSecurity"
@@ -124,8 +123,6 @@ class DataIngestionConfig():
             training_pipeline.FILE_NAME                     # "phishingData.csv"
         )
         # → "Artifacts/08_24_2026_14_32_00/data_ingestion/feature_store/phishingData.csv"
-        # BUG FIXED: tumhara code DATA_INGESTION_INGESTED_DIR use kar raha tha
-        #            feature store ke liye bhi — galat tha
 
         # ── TRAIN FILE PATH ───────────────────────────────────────
         # 80/20 split ke baad train data yahan

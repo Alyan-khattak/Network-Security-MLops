@@ -3,7 +3,7 @@ __pycache__/
 *.pyo
 .env
 logs/
-*.egg-info/
+.egg-info/
 .DS_Store
 *.ipynb_checkpoints
 .vscode/

@@ -33,6 +33,12 @@ MONGO_ATLAS_URI = os.getenv("MONGO_ATLAS_URI")
 import certifi                  # python package for secure HTTPS connections
 ca = certifi.where()            # Certificate Authorities file ka path
                                 # SSL handshake ke liye zaroori
+# → "/path/to/cacert.pem"
+# yeh ek file hai jisme 150+ trusted authorities ki list hai
+# Mozilla ne banai hai yeh list
+# same jo Chrome/Firefox use karta hai
+# certifi = Python ko batata hai kaunsi websites trustworthy hain
+# bina iske Python secure connections verify nahi kar sakta                                
 
 import pandas as pd
 import numpy as np

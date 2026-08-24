@@ -88,3 +88,33 @@ DATA_INGESTION_INGESTED_DIR:     str   = "ingested"
 
 DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO: float = 0.2
 # 80% train, 20% test
+
+
+
+
+
+
+# ─────────────────────────────────────────────────────────────────
+# DATA Validation CONSTANTS
+# prefix: DATA_VALIDATION_ → easily identify karo kahan use hoga
+# ─────────────────────────────────────────────────────────────────
+
+
+
+DATA_VALIDATON_DIR_NAME:         str   = "data_validation"
+# artifact subfolder naam
+# path banega: Artifacts/timestamp/data_ingestion/
+
+DATA_VALIDATION_VALID_DIR: str  = "validated"
+# raw data yahan save hoga
+# path: Artifacts/timestamp/data_ingestion/feature_store/phishingData.csv
+# IMP: feature store = raw data ka backup — split se pehle
+
+DATA_VALIDATION_INVALID_DIR:     str   = "invalid"
+# split ke baad train/test yahan save honge
+# path: Artifacts/timestamp/data_ingestion/ingested/train.csv
+#       Artifacts/timestamp/data_ingestion/ingested/test.csv
+
+DATA_VALIDATION_DRIFT_REPORT_DIR: str = "drift_report"
+
+DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yml"

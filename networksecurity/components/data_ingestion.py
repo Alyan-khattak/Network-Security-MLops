@@ -1,3 +1,7 @@
+# To see the System Architecture Read the Pdf "NetworkSecurity_System_Architecture" in the root folder
+# to see Data Ingestion Strucure -->> 2_data_ingestion.png located in this folder
+
+
 # ═══════════════════════════════════════════════════════════════════
 # networksecurity/components/data_ingestion.py
 # ═══════════════════════════════════════════════════════════════════

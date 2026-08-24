@@ -256,11 +256,9 @@ class DataIngestion():
             # → "Artifacts/.../feature_store"
             dir_path = os.path.dirname(feature_store_file_path)
             os.makedirs(dir_path, exist_ok=True)
-            # BUG FIXED: exist_ok=True missing tha → crash karta agar folder tha
             logging.info(f"Feature store directory created: {dir_path}")
 
             dataframe.to_csv(feature_store_file_path, index=False, header=True)
-            # BUG FIXED: "index=False header=True" → comma missing tha
             logging.info(f"Raw data saved to feature store: {feature_store_file_path}")
 
             return dataframe
@@ -283,8 +281,6 @@ class DataIngestion():
             logging.info("Train/Test split started")
 
             # IMP: test_size parameter format sahi karo
-            # BUG FIXED: train_test_split(df, ratio) → galat
-            # sahi: train_test_split(df, test_size=ratio)
             train_set, test_set = train_test_split(
                 dataframe,
                 test_size=self.data_ingestion_config.train_test_split_ratio
@@ -342,9 +338,6 @@ class DataIngestion():
             self.split_data_as_train_test(dataframe)
 
             # Step 4: Artifact banao — typed return object
-            # BUG FIXED: tumhara code:
-            # DataIngestionArtifacts(train_file_path=..., self.data_ingestion_config.test_file_path)
-            # ← positional argument ke baad keyword argument → SyntaxError
             data_ingestion_artifact = DataIngestionArtifact(
                 train_file_path=self.data_ingestion_config.training_file_path,
                 test_file_path=self.data_ingestion_config.testing_file_path

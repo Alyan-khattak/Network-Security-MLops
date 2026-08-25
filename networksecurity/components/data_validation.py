@@ -323,20 +323,11 @@ class DataValidation:
             numerical_cols = self.schema_config["numerical_columns"]
             logging.info(f"Expected numerical cols: {numerical_cols}")
 
-            # IMP BUG FIXED: tumhara code galat tha:
-            # [col for col in df.columns if col == "int" or col == "float"]
-            # col = column NAAM hai (string) — "having_IP_Address" etc.
-            # col ka dtype check karna tha, col khud nahi
-            # Sahi tarika:
             dataframe_num_cols = dataframe.select_dtypes(
                 include=["int64", "float64"]
             ).columns.tolist()
             logging.info(f"Actual numerical cols: {dataframe_num_cols}")
 
-            # IMP BUG FIXED: tumhara code:
-            # if numerical_cols == numerical_cols  ← hamesha True hoga
-            # same variable se compare kar raha tha!
-            # Sahi:
             for col in numerical_cols:
                 if col not in dataframe_num_cols:
                     logging.info(f"Missing numerical column: {col}")
@@ -428,6 +419,10 @@ class DataValidation:
         try:
             logging.info("Entered Data Validation Method")
 
+            #-------------------------------------------------
+            # for all the steps its function is defined Above 
+            #-------------------------------------------------
+
             # ── STEP 1: Paths nikalo ──────────────────────────────
             # DataIngestionArtifact se train/test paths milte hain
             # DataIngestion ne yahan CSVs save kiye the
@@ -447,23 +442,23 @@ class DataValidation:
 
             status = self.validate_number_cols(dataframe=train_dataframe)
             if not status:
-                error_message += "Train DataFrame mein sab columns nahi hain\n"
+                error_message += "Train DataFrame Doesn't have all the Columns \n"
                 logging.warning("Train column validation failed")
 
             status = self.validate_number_cols(dataframe=test_dataframe)
             if not status:
-                error_message += "Test DataFrame mein sab columns nahi hain\n"
+                error_message += "Test DataFrame Doesn't have all the Columns\n"
                 logging.warning("Test column validation failed")
 
             # ── STEP 4: Numerical columns check karo ─────────────
             status = self.check_numerical_col(dataframe=train_dataframe)
             if not status:
-                error_message += "Train DataFrame mein numerical cols missing hain\n"
+                error_message += "Train DataFrame has Missing numerical columns\n"
                 logging.warning("Train numerical column check failed")
 
             status = self.check_numerical_col(dataframe=test_dataframe)
             if not status:
-                error_message += "Test DataFrame mein numerical cols missing hain\n"
+                error_message += "Test DataFrame has numerical columns\n"
                 logging.warning("Test numerical column check failed")
 
             # ── STEP 5: Data Drift detect karo ───────────────────
@@ -476,7 +471,6 @@ class DataValidation:
 
             # ── STEP 6: Valid data save karo ──────────────────────
             # IMP: valid data save karo → DataTransformation yahan se padhega
-            # BUG FIXED: os.mkdir → os.makedirs (mkdir exist_ok support nahi karta)
             dir_path = os.path.dirname(
                 self.data_validation_config.valid_train_file_path
             )
@@ -495,12 +489,6 @@ class DataValidation:
             logging.info(f"Valid test saved: {self.data_validation_config.valid_test_file_path}")
 
             # ── STEP 7: Artifact banao ────────────────────────────
-            # BUG FIXED (multiple):
-            # 1. self.data_ingestion_artfact.valid_train_file_path → exist nahi
-            #    DataIngestionArtifact mein valid paths nahi hote
-            #    DataValidationConfig se lene chahiye
-            # 2. data_valida_config → self.data_validation_config
-            # 3. comma missing tha invalid_train ke baad
             data_validation_artifact = DataValidationArtifact(
                 validation_status=status,
                 valid_train_file_path=self.data_validation_config.valid_train_file_path,
@@ -527,14 +515,14 @@ class DataValidation:
 # 1. read_data() → train_df (8844 × 31), test_df (2211 × 31)
 #
 # 2. validate_number_cols(train_df)
-#    schema mein 31 cols → train_df mein 31 cols → True ✅
+#    schema mein 31 cols → train_df mein 31 cols → True 
 #
 # 3. validate_number_cols(test_df)
-#    schema mein 31 cols → test_df mein 31 cols → True ✅
+#    schema mein 31 cols → test_df mein 31 cols → True 
 #
 # 4. check_numerical_col(train_df)
 #    schema numerical_cols = [having_IP_Address, URL_Length, ...]
-#    train_df numerical cols = same → True ✅
+#    train_df numerical cols = same → True 
 #
 # 5. detect_data_drift(train_df, test_df)
 #    har column pe KS test:

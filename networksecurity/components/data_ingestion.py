@@ -202,10 +202,13 @@ class DataIngestion():
             # IMP: certifi.where() → SSL certificate verify karne ke liye
             # Arch Linux + OpenSSL issue fix
             self.mongo_client = pymongo.MongoClient(
-                MONGO_DB_URI,
-                tlsCAFile=certifi.where(),
-                tlsAllowInvalidCertificates=True
-            )
+                    MONGO_DB_URI,
+                    tlsCAFile=certifi.where(),
+                    tlsAllowInvalidCertificates=True,
+                    serverSelectionTimeoutMS=60000,
+                    connectTimeoutMS=60000,
+                    socketTimeoutMS=60000
+                )
 
             # database → collection select karo
             collection = self.mongo_client[database_name][collection_name]

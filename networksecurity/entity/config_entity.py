@@ -157,54 +157,105 @@ class DataIngestionConfig():
 
 
 
-
 # ══════════════════════════════════════════════════════════════════
-# CLASS 3: DataVALIDATIOnConfig
+# CLASS 3: DataValidationConfig
 # ══════════════════════════════════════════════════════════════════
+# DataValidation ke liye sab paths
+# TrainingPipelineConfig inject hota hai → same timestamp folder
 class DataValidationConfig:
-    def __init__(self, training_pipeline_Config:TrainingPipelineConfig):
-        self.data_validation_dir:str = os.path.join(
-                                            training_pipeline_Config.artifact_dir,
-                                            training_pipeline.DATA_VALIDATON_DIR_NAME
-                                            )
-        self.valid_data_dir:str = os.path.join(
-                                            self.data_validation_dir, 
-                                            training_pipeline.DATA_VALIDATION_VALID_DIR
-                                            )
+    def __init__(self, training_pipeline_config: TrainingPipelineConfig):
+        """
+        PATH STRUCTURE:
+        Artifacts/timestamp/
+        └── data_validation/
+            ├── validated/              ← valid data (DataTransformation ka INPUT)
+            │   ├── train.csv
+            │   └── test.csv
+            ├── invalid/                ← invalid/drifted data
+            │   ├── train.csv
+            │   └── test.csv
+            └── drift_report/
+                └── report.yaml         ← KS test results
+        """
 
-        self.invalid_data_dir:str = os.path.join(
-                                        self.data_validation_dir,
-                                        training_pipeline.DATA_VALIDATION_VALID_DIR
-                                        )       
-
-        self.valid_train_file_path:str =  os.path.join(
-                                                    self.valid_data_dir, 
-                                                    training_pipeline.TRAIN_FILE_NAME)
-
-        self.valid_test_file_path:str = os.path.join(
-                                                    self.valid_data_dir,
-                                                    training_pipeline.TEST_FILE_NAME
-                                                )
-
-        self.invalid_train_file_path:str = os.path.join(
-                                                    self.invalid_data_dir,
-                                                    training_pipeline.TRAIN_FILE_NAME
-                                                     )
-
-        self.invalid_test_file_path:str = os.path.join(
-                                                    self.invalid_data_dir,
-                                                    training_pipeline.TEST_FILE_NAME
-                                                     )
-
-        self.drift_report_file_path:str = os.path.join(
-            self.data_validation_dir,
-            training_pipeline.DATA_VALIDATION_DRIFT_REPORT_DIR,
-            training_pipeline.DATA_VALIDATION_DRIFT_REPORT_FILE_NAME
+        self.data_validation_dir: str = os.path.join(
+            training_pipeline_config.artifact_dir,       # "Artifacts/timestamp"
+            training_pipeline.DATA_VALIDATON_DIR_NAME    # "data_validation"
         )
+        # → "Artifacts/08_24_2026_14_32_00/data_validation"
 
-        
+        self.valid_data_dir: str = os.path.join(
+            self.data_validation_dir,
+            training_pipeline.DATA_VALIDATION_VALID_DIR  # "validated"
+        )
+        # → "Artifacts/.../data_validation/validated"
+
+        self.invalid_data_dir: str = os.path.join(
+            self.data_validation_dir,
+            training_pipeline.DATA_VALIDATION_INVALID_DIR  # "invalid"
+            # dono valid aur invalid same folder point kar rahe the → galat
+        )
+        # → "Artifacts/.../data_validation/invalid"
+
+        self.valid_train_file_path: str = os.path.join(
+            self.valid_data_dir,
+            training_pipeline.TRAIN_FILE_NAME  # "train.csv"
+        )
+        # → "Artifacts/.../data_validation/validated/train.csv"
+        # IMP: DataTransformation yahan se padhega
+
+        self.valid_test_file_path: str = os.path.join(
+            self.valid_data_dir,
+            training_pipeline.TEST_FILE_NAME  # "test.csv"
+        )
+        # → "Artifacts/.../data_validation/validated/test.csv"
+
+        self.invalid_train_file_path: str = os.path.join(
+            self.invalid_data_dir,
+            training_pipeline.TRAIN_FILE_NAME  # "train.csv"
+        )
+        # → "Artifacts/.../data_validation/invalid/train.csv"
+        # agar drift detect hua → yahan save hoga
+
+        self.invalid_test_file_path: str = os.path.join(
+            self.invalid_data_dir,
+            training_pipeline.TEST_FILE_NAME  # "test.csv"
+        )
+        # → "Artifacts/.../data_validation/invalid/test.csv"
+
+        self.drift_report_file_path: str = os.path.join(
+            self.data_validation_dir,
+            training_pipeline.DATA_VALIDATION_DRIFT_REPORT_DIR,      # "drift_report"
+            training_pipeline.DATA_VALIDATION_DRIFT_REPORT_FILE_NAME # "report.yaml"
+        )
+        # → "Artifacts/.../data_validation/drift_report/report.yaml"
+        # write_yaml_file() yahan KS test results save karega
 
 
+
+
+# ─────────────────────────────────────────────────────────────────
+# FULL ARTIFACTS STRUCTURE — DATA INGESTION + VALIDATION
+#
+# Artifacts/
+# └── 08_24_2026_14_32_00/              ← TrainingPipelineConfig timestamp
+#     │
+#     ├── data_ingestion/               ← DataIngestionConfig.data_ingestion_dir
+#     │   ├── feature_store/            ← DATA_INGESTION_FEATURE_STORE_DIR
+#     │   │   └── phishingData.csv      ← raw MongoDB data backup
+#     │   └── ingested/                 ← DATA_INGESTION_INGESTED_DIR
+#     │       ├── train.csv             ← DataIngestionArtifact.train_file_path
+#     │       └── test.csv              ← DataIngestionArtifact.test_file_path
+#     │
+#     └── data_validation/             ← DataValidationConfig.data_validation_dir
+#         ├── validated/               ← DATA_VALIDATION_VALID_DIR
+#         │   ├── train.csv            ← DataValidationArtifact.valid_train_file_path
+#         │   └── test.csv             ← DataValidationArtifact.valid_test_file_path
+#         ├── invalid/                 ← DATA_VALIDATION_INVALID_DIR
+#         │   ├── train.csv            ← DataValidationArtifact.invalid_train_file_path
+#         │   └── test.csv             ← DataValidationArtifact.invalid_test_file_path
+#         └── drift_report/            ← DATA_VALIDATION_DRIFT_REPORT_DIR
+#             └── report.yaml          ← DataValidationArtifact.drift_report_file_path
 
 
 

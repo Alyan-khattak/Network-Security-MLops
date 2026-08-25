@@ -59,6 +59,8 @@ TRAIN_FILE_NAME = "train.csv"
 TEST_FILE_NAME  = "test.csv"
 # split ke baad train/test files ke naam
 
+SCHEMA_FILE_PATH = os.path.join("data_schema", "schema.yaml")
+
 
 # ─────────────────────────────────────────────────────────────────
 # DATA INGESTION CONSTANTS
@@ -99,22 +101,26 @@ DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO: float = 0.2
 # prefix: DATA_VALIDATION_ → easily identify karo kahan use hoga
 # ─────────────────────────────────────────────────────────────────
 
+DATA_VALIDATON_DIR_NAME:               str = "data_validation"
+# Artifacts/timestamp/data_validation/
+# IMP: typo intentional rakha (tumhara code DATA_VALIDATON hai not VALIDATION)
+# config_entity.py mein same naam use hota hai
 
+DATA_VALIDATION_VALID_DIR:             str = "validated"
+# valid data yahan save hoga
+# Artifacts/timestamp/data_validation/validated/train.csv
+# Artifacts/timestamp/data_validation/validated/test.csv
+# IMP: DataTransformation yahan se padhega
 
-DATA_VALIDATON_DIR_NAME:         str   = "data_validation"
-# artifact subfolder naam
-# path banega: Artifacts/timestamp/data_ingestion/
+DATA_VALIDATION_INVALID_DIR:           str = "invalid"
+# drift ya invalid data yahan
+# Artifacts/timestamp/data_validation/invalid/train.csv
+# Artifacts/timestamp/data_validation/invalid/test.csv
 
-DATA_VALIDATION_VALID_DIR: str  = "validated"
-# raw data yahan save hoga
-# path: Artifacts/timestamp/data_ingestion/feature_store/phishingData.csv
-# IMP: feature store = raw data ka backup — split se pehle
+DATA_VALIDATION_DRIFT_REPORT_DIR:      str = "drift_report"
+# KS test report folder
+# Artifacts/timestamp/data_validation/drift_report/
 
-DATA_VALIDATION_INVALID_DIR:     str   = "invalid"
-# split ke baad train/test yahan save honge
-# path: Artifacts/timestamp/data_ingestion/ingested/train.csv
-#       Artifacts/timestamp/data_ingestion/ingested/test.csv
-
-DATA_VALIDATION_DRIFT_REPORT_DIR: str = "drift_report"
-
-DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yml"
+DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yaml"
+# KS test results yahan save honge
+# Artifacts/timestamp/data_validation/drift_report/report.yaml

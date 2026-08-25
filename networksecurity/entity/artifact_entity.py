@@ -31,3 +31,37 @@ class DataIngestionArtifact:
 # IMP: DataValidation in paths se data padhega
 # koi bhi component jo DataIngestion ke baad aaye
 # use DataIngestionArtifact milega → type-safe
+
+
+
+
+# ── ARTIFACT 2: DataValidationArtifact ───────────────────────────
+# DataValidation.initiate_data_validation() yeh return karega
+# DataTransformation ko yeh milega → valid paths se data padhega
+@dataclass
+class DataValidationArtifact:
+    validation_status: bool
+    # True = data valid hai → pipeline aage chale
+    # False = data invalid hai → pipeline rok do
+
+    valid_train_file_path: str
+    # validated/train.csv → DataTransformation yahan se padhega
+    # "Artifacts/timestamp/data_validation/validated/train.csv"
+
+    valid_test_file_path: str
+    # validated/test.csv → DataTransformation yahan se padhega
+    # "Artifacts/timestamp/data_validation/validated/test.csv"
+
+    invalid_train_file_path: str
+    # invalid/train.csv → agar drift detect hua → yahan save hoga
+    # "Artifacts/timestamp/data_validation/invalid/train.csv"
+
+    invalid_test_file_path: str
+    # invalid/test.csv
+    # "Artifacts/timestamp/data_validation/invalid/test.csv"
+
+    drift_report_file_path: str
+    # drift_report/report.yaml → KS test results yahan save honge
+    # "Artifacts/timestamp/data_validation/drift_report/report.yaml"
+
+    

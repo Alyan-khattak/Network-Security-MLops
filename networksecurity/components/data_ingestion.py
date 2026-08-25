@@ -26,6 +26,30 @@
 #   DataIngestionArtifact → DataValidation ko pass hoga
 #
 ###==============================================================
+
+"""
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+=================================================================
+### IMP:: FILE STRUCTURE
+==================================================================
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1:Constants/taraining_pipeline/__init__.py ::: Is file mai Saary COMMON Variables k naam likhy h 
+
+2:entity/config_entity.py :: is file mai directory structure k hisab sy Saary Paths defined h
+
+3:entity/artifact_entity :: is me artifacts ( RETURN VALUES ) aik file/class kon kon si cheezein return karega woh defined h -->> We can say Outputs of a file
+                            pipeline mai aik file ka Output usky next file ka input Hota h
+                            e.g data_ingestion file k artifacts ( Outputs ) data_validation k inputs h
+                            same data_validation k artifacts ( Outputs ) data_transformation k inputs honge
+
+4: utils/main_utils/utils.py :: is file mai saary wo methods defined h jo multiple files mai use honge
+
+5:loggin/logger.py :: logging defined h 
+6: exception/exception.py :: exception defined h 
+ 
+"""
+
 """
 config_entity.py
 - DataIngestionConfig → sab paths yahan se aate hain

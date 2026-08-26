@@ -233,6 +233,74 @@ class DataValidationConfig:
 
 
 
+# ══════════════════════════════════════════════════════════════════
+# CLASS 4: Data TransformationConfig
+# ══════════════════════════════════════════════════════════════════
+
+class DataTransformationConfig:
+    def __init__(self, training_pipeline_config: TrainingPipelineConfig):
+        """
+        DataTransformation ke liye sab paths banata hai.
+        TrainingPipelineConfig inject hota hai → timestamp milta hai
+
+        Parameters:
+            training_pipeline_config (TrainingPipelineConfig):
+                master config — artifact_dir milta hai isse
+                → "Artifacts/08_24_2026_14_32_00"
+
+
+        # IMP: .csv → .npy (numpy binary format)
+        # DataTransformation numpy arrays save karta hai
+        # .npy = numpy ka native format → fast load → sklearn direct use karta hai
+        # .csv se zyada efficient — float64 arrays ke liye
+        #
+        # PATH STRUCTURE:
+        # Artifacts/timestamp/
+        # └── data_transformation/                    ← data_transformation_dir
+        #     ├── transformed/                        ← TRANSFORMED_DATA_DIR
+        #     │   ├── train.npy                       ← transformed_train_file_path
+        #     │   └── test.npy                        ← transformed_test_file_path
+        #     └── transformed_object/                 ← TRANSFORMED_OBJECT_DIR
+        #         └── preprocessing.pkl              ← transformed_object_file_path
+        #      
+        """
+
+        self.data_transformation_dir: str = os.path.join(
+            training_pipeline_config.artifact_dir,           # "Artifacts/timestamp"
+            training_pipeline.DATA_TRANSFORMATION_DIR_NAME   # "data_transformation"
+        )
+        # → "Artifacts/08_24_2026_14_32_00/data_transformation"
+
+        self.transformed_train_file_path: str = os.path.join(
+            self.data_transformation_dir,
+            training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,  # "transformed"
+            training_pipeline.TRAIN_FILE_NAME.replace("csv", "npy")
+            # "train.csv" → "train.npy"
+            # IMP: .npy = numpy binary format
+            # DataTransformation np.save() se save karega
+            # DataValidation ne validated/train.csv save kiya tha
+            # DataTransformation usse padhega → numpy array → .npy save karega
+        )
+        # → "Artifacts/.../data_transformation/transformed/train.npy"
+
+        self.transformed_test_file_path: str = os.path.join(
+            self.data_transformation_dir,
+            training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,  # "transformed"
+            training_pipeline.TEST_FILE_NAME.replace("csv", "npy")
+            # "test.csv" → "test.npy"
+        )
+        # → "Artifacts/.../data_transformation/transformed/test.npy"
+
+        self.transformed_object_file_path: str = os.path.join(
+            self.data_transformation_dir,
+            training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR,  # "transformed_object"
+            training_pipeline.PREPROCESSING_OBJECT_FILE_NAME               # "preprocessing.pkl"
+            # IMP: KNNImputer fitted preprocessor yahan save hoga
+            # predict_pipeline mein load karke naye data pe transform karega
+            # same as pehle teen projects mein preprocessor.pkl tha
+        )
+        # → "Artifacts/.../data_transformation/transformed_object/preprocessing.pkl"
+
 
 # ─────────────────────────────────────────────────────────────────
 # FULL ARTIFACTS STRUCTURE — DATA INGESTION + VALIDATION
@@ -248,18 +316,21 @@ class DataValidationConfig:
 #     │       └── test.csv              ← DataIngestionArtifact.test_file_path
 #     │
 #     └── data_validation/             ← DataValidationConfig.data_validation_dir
-#         ├── validated/               ← DATA_VALIDATION_VALID_DIR
-#         │   ├── train.csv            ← DataValidationArtifact.valid_train_file_path
-#         │   └── test.csv             ← DataValidationArtifact.valid_test_file_path
-#         ├── invalid/                 ← DATA_VALIDATION_INVALID_DIR
-#         │   ├── train.csv            ← DataValidationArtifact.invalid_train_file_path
-#         │   └── test.csv             ← DataValidationArtifact.invalid_test_file_path
-#         └── drift_report/            ← DATA_VALIDATION_DRIFT_REPORT_DIR
-#             └── report.yaml          ← DataValidationArtifact.drift_report_file_path
-
-
-
-
+#     |    ├── validated/               ← DATA_VALIDATION_VALID_DIR
+#     |    │   ├── train.csv            ← DataValidationArtifact.valid_train_file_path
+#     |    │   └── test.csv             ← DataValidationArtifact.valid_test_file_path
+#     |    ├── invalid/                 ← DATA_VALIDATION_INVALID_DIR
+#     |    │   ├── train.csv            ← DataValidationArtifact.invalid_train_file_path
+#     |    │   └── test.csv             ← DataValidationArtifact.invalid_test_file_path
+#     |    └── drift_report/            ← DATA_VALIDATION_DRIFT_REPORT_DIR
+#     |        └── report.yaml          ← DataValidationArtifact.drift_report_file_path
+#     | 
+#     └── data_transformation/               ← DataTransformation banayega
+#         ├── transformed/
+#         │   ├── train.npy                  ← ModelTrainer ka INPUT
+#         │   └── test.npy                   ← ModelTrainer ka INPUT
+#         └── transformed_object/
+#             └── preprocessing.pkl          ← PredictPipeline load karega
 
 # ─────────────────────────────────────────────────────────────────
 # DRY RUN

@@ -64,4 +64,23 @@ class DataValidationArtifact:
     # drift_report/report.yaml → KS test results yahan save honge
     # "Artifacts/timestamp/data_validation/drift_report/report.yaml"
 
-    
+
+
+
+
+# ── ARTIFACT 3: DataTransformationArtifact ───────────────────────────
+# DataTransformation.initiate_data_transformation() yeh return karega
+# Model Trainer ko yeh milega  as input→ valid paths se data padhega    
+@dataclass
+class DataTransformationArtifact:
+    transformed_object_file_path: str
+    # "Artifacts/.../data_transformation/transformed_object/preprocessing.pkl"
+    # IMP: ModelTrainer + PredictPipeline dono use karenge
+
+    transformed_train_file_path: str
+    # "Artifacts/.../data_transformation/transformed/train.npy"
+    # ModelTrainer ka INPUT
+
+    transformed_test_file_path: str
+    # "Artifacts/.../data_transformation/transformed/test.npy"
+    # ModelTrainer ka INPUT

@@ -124,3 +124,72 @@ DATA_VALIDATION_DRIFT_REPORT_DIR:      str = "drift_report"
 DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yaml"
 # KS test results yahan save honge
 # Artifacts/timestamp/data_validation/drift_report/report.yaml
+
+
+
+
+# ─────────────────────────────────────────────────────────────────
+# DATA Validation Transformation 
+# prefix: DATA_Transformation_ → easily identify karo kahan use hoga
+# ─────────────────────────────────────────────────────────────────
+DATA_TRANSFORMATION_DIR_NAME:              str = "data_transformation"
+# Artifacts/timestamp/data_transformation/
+
+DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR:  str = "transformed"
+# numpy arrays yahan:
+# Artifacts/timestamp/data_transformation/transformed/train.npy
+# Artifacts/timestamp/data_transformation/transformed/test.npy
+
+DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR: str = "transformed_object"
+# preprocessor pkl yahan:
+# Artifacts/timestamp/data_transformation/transformed_object/preprocessing.pkl
+
+
+#Knn Imputer to replace nan Values
+DATA_TRANSFORMATION_IMPUTER_PARAMS: dict = {
+    "missing_values": np.nan,
+    # IMP: kaunsi values ko missing maana jaaye
+    # np.nan = NaN values → yahi replace karenge
+    # DataIngestion mein humne "na" strings → np.nan kiya tha
+    # ab KNNImputer in NaN values ko fill karega
+
+    "n_neighbors": 3,
+    # KNN Imputer — KNN (K-Nearest Neighbors) use karta hai missing values fill karne ke liye
+    # n_neighbors=3 → 3 nearest neighbors dhundho
+    # missing value = in 3 neighbors ka average
+    #
+    # Example:
+    # Row mein "port" column NaN hai
+    # Similar 3 rows dhundho (baaki features ke basis pe)
+    # Un 3 rows ka "port" value average karo → NaN fill karo
+    #
+    # WHY KNN IMPUTER (not SimpleImputer)?
+    # SimpleImputer → sirf median/mean use karta hai (global)
+    # KNNImputer    → similar rows dekh ke fill karta hai (local)
+    # Network security data mein features correlated hain
+    # similar network patterns similar values rakhte hain
+    # → KNN zyada accurate fill karta hai
+
+    "weights": "uniform"
+    # IMP: "weights" (plural) → "weight" galat hai → bug fix karo
+    # 3 neighbors mein se har ek ko kitna importance do
+    #
+    # "uniform"  → sab neighbors ko equal weight
+    #              avg(neighbor1, neighbor2, neighbor3)
+    #
+    # "distance" → paas wale neighbor ko zyada weight
+    #              closer neighbor → more influence
+    #
+    # "uniform" kyun choose kiya?
+    # is dataset mein binary/categorical features hain (0, 1, -1)
+    # distance-based weighting zyada farak nahi karta
+    # simple aur fast → uniform better choice
+}
+
+# IMP: DataTransformation mein use hoga:
+# from networksecurity.constants.training_pipeline import DATA_TRANSFORMATION_IMPUTER_PARAMS
+#
+# imputer = KNNImputer(**DATA_TRANSFORMATION_IMPUTER_PARAMS)
+# → KNNImputer(missing_values=np.nan, n_neighbors=3, weights="uniform")
+#
+# ** = dict unpack → key-value pairs → function arguments ban jaate hain

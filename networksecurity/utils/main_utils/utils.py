@@ -103,6 +103,15 @@ def write_yaml_file(file_path: str, content: object, replace: bool = False) -> N
 # FUNCTION 3: save_numpy_array_data
 # ══════════════════════════════════════════════════════════════════
 def save_numpy_array_data(file_path:str, array: np.array):
+    """
+    Numpy array ko .npy file mein save karta hai.
+    ModelTrainer is file ko load karke X_train, y_train nikaalega.
+
+    Parameters:
+        file_path (str)        : jahan save karna hai e.g. "Artifacts/.../train.npy"
+        array     (np.ndarray) : numpy array jo save karna hai
+    """
+      
     try:
         logging.info("Entered The Save numpy array  method of util.py to save ")
         dir_path = os.path.dirname(file_path)
@@ -119,12 +128,16 @@ def save_numpy_array_data(file_path:str, array: np.array):
 # FUNCTION 4: save_object
 # ══════════════════════════════════════════════════════════════════
 def save_object(file_path:str, obj: object):
+    """
+    .npy file se numpy array load karta hai.
+    ModelTrainer use karega.
+    """
     try:
         logging.info("Entered The Save object method of util.py to save {obj} ")
         dir_path = os.path.dirname(file_path)
         os.makedirs(dir_path, exist_ok=True)
         with open(file_path, "wb") as file_obj:
-            dill.dump(file_obj, obj)
+            dill.dump(obj, file_obj)
 
         logging.info("Existed the mehod and saved : {obj} ")
     except Exception as e:

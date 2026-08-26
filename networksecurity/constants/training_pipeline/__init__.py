@@ -144,6 +144,9 @@ DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR: str = "transformed_object"
 # preprocessor pkl yahan:
 # Artifacts/timestamp/data_transformation/transformed_object/preprocessing.pkl
 
+PREPROCESSING_OBJECT_FILE_NAME: str = "preprocessing.pkl"
+# fitted KNNImputer — DataTransformationConfig mein use hota hai
+# predict_pipeline mein load hoga naye data transform karne ke liye
 
 #Knn Imputer to replace nan Values
 DATA_TRANSFORMATION_IMPUTER_PARAMS: dict = {

@@ -23,6 +23,9 @@ from networksecurity.entity.config_entity import (
     DataTransformationConfig    # ← NEW
 )
 
+from networksecurity.components.model_trainer import ModelTrainer
+from networksecurity.entity.config_entity import ModelTrainerConfig
+
 if __name__ == "__main__":
     try:
         logging.info("Training Pipeline started")
@@ -102,9 +105,29 @@ if __name__ == "__main__":
         # ├── transformed_test_file_path     = "Artifacts/.../transformed/test.npy"
         # └── transformed_object_file_path   = "Artifacts/.../transformed_object/preprocessing.pkl"
 
-        print(data_ingestion_artifact)
-        print(data_validation_artifact)
-        print(data_transformation_artifact)
+        # ── STEP 5: Model Trainer ──────────────────────────────────
+        # numpy arrays → GridSearchCV → best model → MLflow → artifact
+        model_trainer_config = ModelTrainerConfig(
+            training_pipeline_config=training_pipeline_config
+        )
+        # IMP: same training_pipeline_config → same timestamp folder
+
+        model_trainer = ModelTrainer(
+            model_trainer_config=model_trainer_config,
+            data_transformation_artifact=data_transformation_artifact
+            # ↑ DataTransformation ka OUTPUT → ModelTrainer ka INPUT
+            # train.npy, test.npy, preprocessing.pkl paths yahan se milenge
+        )
+        logging.info("ModelTrainer initialized")
+
+        model_trainer_artifact = model_trainer.initiate_model_trainer()
+        logging.info(f"ModelTrainer completed: {model_trainer_artifact}")
+        # model_trainer_artifact:
+        # ├── trained_model_file_path = "Artifacts/.../model_trainer/trained_model/model.pkl"
+        # ├── train_metric_artifact   = ClassificationMetricArtifact(f1, precision, recall)
+        # └── test_metric_artifact    = ClassificationMetricArtifact(f1, precision, recall)
+
+        print(model_trainer_artifact)
 
     except Exception as e:
         raise NetworkSecurityException(e, sys)

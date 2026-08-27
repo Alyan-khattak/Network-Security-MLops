@@ -25,6 +25,8 @@ from networksecurity.exception.exception import NetworkSecurityException
 from networksecurity.logging.logger import logging
 import numpy as np
 import dill
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import r2_score
 
 # ══════════════════════════════════════════════════════════════════
 # FUNCTION 1: read_yaml_file
@@ -148,7 +150,7 @@ def save_object(file_path:str, obj: object):
 # ══════════════════════════════════════════════════════════════════
 # FUNCTION 5: load_object
 # ══════════════════════════════════════════════════════════════════
-def save_object(file_path:str) -> object:
+def load_object(file_path:str) -> object:
     """
      load saved object 
     """
@@ -176,6 +178,82 @@ def load_numpy_array(file_path:str) -> np.array:
         raise NetworkSecurityException(e, sys)
 
 
+
+# ══════════════════════════════════════════════════════════════════
+# FUNCTION 7: evaluate_models
+# ══════════════════════════════════════════════════════════════════
+def evaluate_models(X_train, y_train, X_test, y_test, models, params) -> dict:
+    """
+    Sab models ko GridSearchCV se tune karta hai.
+    Har model ka test F1 score return karta hai.
+
+    ModelTrainer.train_model() is function ko call karta hai.
+
+    PEHLE TEEN PROJECTS MEIN:
+        r2_score use kiya tha — regression tha
+    YAHAN:
+        f1_score use karo — classification hai
+        network security → false positives bhi costly hain
+
+    Parameters:
+        X_train, y_train : training data (numpy arrays)
+        X_test,  y_test  : test data (numpy arrays)
+        models  (dict)   : {"model name": model_object}
+        params  (dict)   : {"model name": {param_grid}}
+
+    Returns:
+        report (dict) : {"model name": test_f1_score}
+                        ModelTrainer isse best model dhundne ke liye use karta hai
+    """
+    try:
+        from sklearn.model_selection import GridSearchCV
+        from sklearn.metrics import f1_score
+        # BUG FIXED: r2_score → f1_score
+        # r2_score regression ke liye hai — classification mein galat metric
+
+        logging.info("Entered evaluate_models — starting GridSearchCV for all models")
+
+        report = {}
+
+        for name, model in models.items():
+            param_grid = params[name]
+            # us model ke params nikalo
+            # e.g. "Random Forest" → {"n_estimators": [8,16,32,128,256]}
+
+            # GridSearchCV — best params dhundho 5-fold CV se
+            grid_cv = GridSearchCV(
+                estimator=model,
+                param_grid=param_grid,
+                cv=5,
+                scoring="f1",     
+                n_jobs=-1          # sab cores use karo → fast
+            )
+
+            grid_cv.fit(X_train, y_train)
+            logging.info(f"{name} — best params: {grid_cv.best_params_} | best CV F1: {grid_cv.best_score_:.4f}")
+
+            # best params model pe set karo
+            model.set_params(**grid_cv.best_params_)
+            # ** = dict unpack → model.set_params(n_estimators=256) etc.
+
+            # best params se final train karo
+            model.fit(X_train, y_train)
+
+            y_train_pred = model.predict(X_train)
+            y_test_pred  = model.predict(X_test)
+
+
+            # test pred ko test true se compare karo
+            train_model_score = f1_score(y_train, y_train_pred)
+            test_model_score  = f1_score(y_test,  y_test_pred)
+        
+            report[name] = test_model_score
+            logging.info(f"{name} → Train F1: {train_model_score:.4f} | Test F1: {test_model_score:.4f}")
+
+        return report
+
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)
 
 
 # ─────────────────────────────────────────────────────────────────

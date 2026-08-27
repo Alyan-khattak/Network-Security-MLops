@@ -302,8 +302,52 @@ class DataTransformationConfig:
         # → "Artifacts/.../data_transformation/transformed_object/preprocessing.pkl"
 
 
+
+# ══════════════════════════════════════════════════════════════════
+# CLASS ModelTrainerConfig
+# ══════════════════════════════════════════════════════════════════
+class ModelTrainerConfig:
+    def __init__(self, training_pipeline_config: TrainingPipelineConfig):
+        """
+        ModelTrainer ke liye sab paths banata hai.
+
+        Parameters:
+            training_pipeline_config (TrainingPipelineConfig):
+                master config — artifact_dir milta hai isse
+                → "Artifacts/08_24_2026_14_32_00"
+
+        PATH STRUCTURE:
+        Artifacts/timestamp/
+        └── model_trainer/                    ← model_trainer_dir
+            └── trained_model/                ← MODEL_TRAINER_TRAIN_MODEL_DIR
+                └── model.pkl                 ← trained_model_file_path
+        """
+
+        self.model_trainer_dir: str = os.path.join(
+            training_pipeline_config.artifact_dir,      # "Artifacts/timestamp"
+            training_pipeline.MODEL_TRAINER_DIR_NAME    # "model_trainer"
+        )
+        # → "Artifacts/08_24_2026_14_32_00/model_trainer"
+
+        self.trained_model_file_path: str = os.path.join(
+            self.model_trainer_dir,
+            training_pipeline.MODEL_TRAINER_TRAIN_MODEL_DIR,    # "trained_model"
+            training_pipeline.MODEL_TRAINER_TRAINED_MODEL_NAME  # "model.pkl"
+        )
+        # → "Artifacts/08_24_2026_14_32_00/model_trainer/trained_model/model.pkl"
+        # IMP: PredictPipeline yahan se model load karega
+
+        self.expected_accuracy: float = training_pipeline.MODEL_TRAINER_EXPECTED_SCORE
+        # → 0.6
+        # ModelTrainer check karega → agar best model 0.6 se kam → exception
+
+        self.overfitting_underfitting_threshold: float = training_pipeline.MODEL_TRAINER_OVERFITTING_UNDER_FITTING_THRESHOLD
+
+
+
+
 # ─────────────────────────────────────────────────────────────────
-# FULL ARTIFACTS STRUCTURE — DATA INGESTION + VALIDATION
+# FULL ARTIFACTS STRUCTURE — DATA INGESTION + VALIDATION + TRANSFORMATION + MODEL TRAINER
 #
 # Artifacts/
 # └── 08_24_2026_14_32_00/              ← TrainingPipelineConfig timestamp
@@ -315,22 +359,47 @@ class DataTransformationConfig:
 #     │       ├── train.csv             ← DataIngestionArtifact.train_file_path
 #     │       └── test.csv              ← DataIngestionArtifact.test_file_path
 #     │
-#     └── data_validation/             ← DataValidationConfig.data_validation_dir
-#     |    ├── validated/               ← DATA_VALIDATION_VALID_DIR
-#     |    │   ├── train.csv            ← DataValidationArtifact.valid_train_file_path
-#     |    │   └── test.csv             ← DataValidationArtifact.valid_test_file_path
-#     |    ├── invalid/                 ← DATA_VALIDATION_INVALID_DIR
-#     |    │   ├── train.csv            ← DataValidationArtifact.invalid_train_file_path
-#     |    │   └── test.csv             ← DataValidationArtifact.invalid_test_file_path
-#     |    └── drift_report/            ← DATA_VALIDATION_DRIFT_REPORT_DIR
-#     |        └── report.yaml          ← DataValidationArtifact.drift_report_file_path
-#     | 
-#     └── data_transformation/               ← DataTransformation banayega
-#         ├── transformed/
-#         │   ├── train.npy                  ← ModelTrainer ka INPUT
-#         │   └── test.npy                   ← ModelTrainer ka INPUT
-#         └── transformed_object/
-#             └── preprocessing.pkl          ← PredictPipeline load karega
+#     ├── data_validation/              ← DataValidationConfig.data_validation_dir
+#     │   ├── validated/                ← DATA_VALIDATION_VALID_DIR
+#     │   │   ├── train.csv             ← DataValidationArtifact.valid_train_file_path
+#     │   │   └── test.csv              ← DataValidationArtifact.valid_test_file_path
+#     │   ├── invalid/                  ← DATA_VALIDATION_INVALID_DIR
+#     │   │   ├── train.csv             ← DataValidationArtifact.invalid_train_file_path
+#     │   │   └── test.csv              ← DataValidationArtifact.invalid_test_file_path
+#     │   └── drift_report/             ← DATA_VALIDATION_DRIFT_REPORT_DIR
+#     │       └── report.yaml           ← DataValidationArtifact.drift_report_file_path
+#     │
+#     ├── data_transformation/          ← DataTransformationConfig.data_transformation_dir
+#     │   ├── transformed/              ← DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR
+#     │   │   ├── train.npy             ← DataTransformationArtifact.transformed_train_file_path
+#     │   │   └── test.npy              ← DataTransformationArtifact.transformed_test_file_path
+#     │   └── transformed_object/       ← DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR
+#     │       └── preprocessing.pkl     ← DataTransformationArtifact.transformed_object_file_path
+#     │           (fitted KNNImputer)   ← PredictPipeline load karega
+#     │
+#     └── model_trainer/                ← ModelTrainerConfig.model_trainer_dir
+#         └── trained_model/            ← MODEL_TRAINER_TRAIN_MODEL_DIR
+#             └── model.pkl             ← ModelTrainerArtifact.trained_model_file_path
+#                 (best fitted model)   ← PredictPipeline load karega
+#
+# ─────────────────────────────────────────────────────────────────
+# CHAIN — har step ka output agla step ka input hai:
+#
+# MongoDB Atlas
+#   ↓ DataIngestion
+# ingested/train.csv + test.csv        ← DataIngestionArtifact
+#   ↓ DataValidation
+# validated/train.csv + test.csv       ← DataValidationArtifact
+# drift_report/report.yaml
+#   ↓ DataTransformation
+# transformed/train.npy + test.npy     ← DataTransformationArtifact
+# transformed_object/preprocessing.pkl
+#   ↓ ModelTrainer
+# trained_model/model.pkl              ← ModelTrainerArtifact
+#   ↓ PredictPipeline
+# preprocessing.pkl + model.pkl → naye data pe prediction
+# ─────────────────────────────────────────────────────────────────
+
 
 # ─────────────────────────────────────────────────────────────────
 # DRY RUN

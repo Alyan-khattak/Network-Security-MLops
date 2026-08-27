@@ -196,3 +196,34 @@ DATA_TRANSFORMATION_IMPUTER_PARAMS: dict = {
 # → KNNImputer(missing_values=np.nan, n_neighbors=3, weights="uniform")
 #
 # ** = dict unpack → key-value pairs → function arguments ban jaate hain
+
+
+
+
+
+# ─────────────────────────────────────────────────────────────────
+# MODEL TRAINER CONSTANTS
+# prefix: MODEL_TRAINER_ → easily identify karo kahan use hoga
+# ─────────────────────────────────────────────────────────────────
+
+MODEL_TRAINER_DIR_NAME: str = "model_trainer"
+# Artifacts/timestamp/model_trainer/
+
+MODEL_TRAINER_TRAIN_MODEL_DIR: str = "trained_model"
+# Artifacts/timestamp/model_trainer/trained_model/
+
+MODEL_TRAINER_TRAINED_MODEL_NAME: str = "model.pkl"
+# Artifacts/timestamp/model_trainer/trained_model/model.pkl
+# PredictPipeline load karega yahan se
+
+MODEL_TRAINER_EXPECTED_SCORE: float = 0.6
+# IMP: minimum acceptable accuracy
+# agar best model bhi 0.6 se kam → pipeline rok do
+
+MODEL_TRAINER_OVERFITTING_UNDER_FITTING_THRESHOLD: float = 0.05
+# IMP: train score - test score > 0.05 → overfitting
+#      test score  - train score > 0.05 → underfitting
+# dono cases mein model reject karo
+# Example:
+#   train accuracy = 0.95, test accuracy = 0.70
+#   difference = 0.25 > 0.05 → OVERFITTING → reject

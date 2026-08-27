@@ -84,3 +84,62 @@ class DataTransformationArtifact:
     transformed_test_file_path: str
     # "Artifacts/.../data_transformation/transformed/test.npy"
     # ModelTrainer ka INPUT
+
+
+
+# ── ARTIFACT 4: ClassificationMetricArtifact ─────────────────────
+# ModelTrainer train aur test dono pe metrics calculate karta hai
+# F1, Precision, Recall → ek structured object mein store karo
+# ModelTrainerArtifact mein yeh nested hoga
+#
+# WHY ALAG ARTIFACT?
+# PEHLE TEEN PROJECTS MEIN:
+#   sirf r2_score ya AUC return karte the — single float
+# YAHAN:
+#   teen metrics ek object mein → clean aur type-safe
+#   train_metric aur test_metric → dono alag alag store honge
+#   → overfitting check karna easy: train_metric.f1 vs test_metric.f1
+@dataclass
+class ClassificationMetricArtifact:
+    f1_score: float
+    # F1 = precision aur recall ka harmonic mean
+    # network security mein important → false positives bhi costly hain
+
+    precision_score: float
+    # BUG FIXED: precession_score → precision_score (typo)
+    # precision = TP / (TP + FP)
+    # flagged threats mein se kitne real threats the
+
+    recall_score: float
+    # recall = TP / (TP + FN)
+    # actual threats mein se kitne pakde
+
+
+# ── ARTIFACT 5: ModelTrainerArtifact ─────────────────────────────
+# ModelTrainer.initiate_model_training() yeh return karega
+# PredictPipeline ko model_file_path chahiye → load karke predict karega
+# MLflow bhi in metrics ko log karega experiment tracking ke liye
+#
+# IMP: train_metric aur test_metric DONO store hain
+# DataValidation artifact ke baad validation_status tha (True/False)
+# ModelTrainer artifact mein actual performance numbers hain
+# → overfitting check: train_metric.f1_score vs test_metric.f1_score
+@dataclass
+class ModelTrainerArtifact:
+    trained_model_file_path: str
+    # "Artifacts/timestamp/model_trainer/trained_model/model.pkl"
+    # PredictPipeline yahan se model load karega
+
+    train_metric_artifact: ClassificationMetricArtifact
+    # training data pe metrics
+    # ├── f1_score
+    # ├── precision_score
+    # └── recall_score
+    # overfitting check: train_metric.f1 - test_metric.f1 > 0.05?
+
+    test_metric_artifact: ClassificationMetricArtifact
+    # test data pe metrics
+    # ├── f1_score
+    # ├── precision_score
+    # └── recall_score
+    # yeh wala production performance estimate karta hai

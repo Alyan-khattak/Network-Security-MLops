@@ -133,18 +133,47 @@ def save_object(file_path:str, obj: object):
     ModelTrainer use karega.
     """
     try:
-        logging.info("Entered The Save object method of util.py to save {obj} ")
+        logging.info(f"Entered The Save object method of util.py to save {obj} ")
         dir_path = os.path.dirname(file_path)
         os.makedirs(dir_path, exist_ok=True)
         with open(file_path, "wb") as file_obj:
             dill.dump(obj, file_obj)
 
-        logging.info("Existed the mehod and saved : {obj} ")
+        logging.info(f"Existed the mehod and saved : {obj} ")
     except Exception as e:
         raise NetworkSecurityException(e, sys)
 
     
 
+# ══════════════════════════════════════════════════════════════════
+# FUNCTION 5: load_object
+# ══════════════════════════════════════════════════════════════════
+def save_object(file_path:str) -> object:
+    """
+     load saved object 
+    """
+    try:
+        logging.info(f"Entered The Load object method of util.py to load object from {file_path}  ")
+        with open(file_path, "rb") as file_obj:
+            return dill.load(file_obj)
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)
+
+
+
+# ══════════════════════════════════════════════════════════════════
+# FUNCTION 6: load_numpy_array
+# ══════════════════════════════════════════════════════════════════
+def load_numpy_array(file_path:str) -> np.array:
+    """
+     load saved object 
+    """
+    try:
+        logging.info(f"Entered The Load object method of util.py to save")
+        with open(file_path, "rb") as file_obj:
+            return np.load(file_obj)
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)
 
 
 

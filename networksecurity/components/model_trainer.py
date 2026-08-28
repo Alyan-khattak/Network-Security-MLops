@@ -465,7 +465,7 @@ class ModelTrainer:
 #    {"Random Forest": 0.95, "Decision Tree": 0.91, ...}
 #    best = "Random Forest" → F1: 0.95
 #
-# 4. F1 0.95 > 0.6 (expected_accuracy) → pass ✅
+# 4. F1 0.95 > 0.6 (expected_accuracy) → pass 
 #
 # 5. classification_train_metric = get_classification_score(y_train, y_train_pred)
 #    → ClassificationMetricArtifact(f1=0.97, precision=0.96, recall=0.98)
@@ -475,7 +475,7 @@ class ModelTrainer:
 #    → ClassificationMetricArtifact(f1=0.95, precision=0.94, recall=0.96)
 #    track_mlflow(best_model, test_metric) → MLflow log
 #
-# 7. |0.97 - 0.95| = 0.02 < 0.05 (threshold) → no overfitting ✅
+# 7. |0.97 - 0.95| = 0.02 < 0.05 (threshold) → no overfitting 
 #
 # 8. preprocessor = load_object(preprocessing.pkl)
 #    network_model = NetworkModel(preprocessor, RandomForest)

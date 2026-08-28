@@ -186,6 +186,14 @@ from sklearn.ensemble import (
     RandomForestClassifier
 )
 
+# Initailization DagsHub
+# To see what is DagsHub and Mlflow see the file :: MLflow_Beginner_Guide.md
+import dagshub
+dagshub.init(repo_owner='Alyan-khattak', repo_name='Network-Security-MLops', mlflow=True)
+#MLflow tracks your ML Experiments 
+#DagsHUb is like gthub , You connect ur github repo with DagsHUb
+#then when you run the MLFlow Experiments are track over there, you can see it in dagshub experiments Sections
+
 
 # ── MAIN CLASS ────────────────────────────────────────────────────
 class ModelTrainer:
@@ -235,7 +243,7 @@ class ModelTrainer:
 
             # BUG FIXED: mlflow.sklearn.load_model → log_model
             # load_model loads a model — log_model saves it to MLflow
-            mlflow.sklearn.log_model(best_model, "model")
+            mlflow.sklearn.log_model(best_model, name="model")
             logging.info(
                 f"MLflow logged — F1: {f1_score:.4f} | "
                 f"Precision: {precision_score:.4f} | "

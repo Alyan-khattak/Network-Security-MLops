@@ -391,6 +391,22 @@ class ModelTrainer:
         )
         logging.info(f"NetworkModel saved: {self.model_trainer_config.trained_model_file_path}")
 
+        #########################
+        # Model Pusher -> save Model and preprocessor in final_model folder too
+        ###########################
+        FINAL_MODEL_DIR = "/home/aizen/ML_Projects/Network_Securiy/final_model"
+        # save  model 
+        save_object(
+            file_path=os.path.join(FINAL_MODEL_DIR, "model.pkl"),
+            obj=best_model
+        )
+        # save preprocessor
+        save_object(
+            file_path=os.path.join(FINAL_MODEL_DIR, "preprocessor.pkl"),
+            obj=preprocessor
+        )
+
+
         # ── ARTIFACT BANAO ────────────────────────────────────────
         model_trainer_artifact = ModelTrainerArtifact(
             trained_model_file_path=self.model_trainer_config.trained_model_file_path,

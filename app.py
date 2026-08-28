@@ -131,10 +131,10 @@ app.add_middleware(
 # ROUTE 1: / → Swagger UI Redirect
 # ══════════════════════════════════════════════════════════════════
 @app.get("/", tags=["authentication"])
-async def index():
+async def index(request:Request):
     # FastAPI automatically /docs pe Swagger UI banata hai
     # wahan sab routes test kar sakte ho browser mein
-    return RedirectResponse(url="/docs")
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -159,7 +159,17 @@ async def train_route():
 # ══════════════════════════════════════════════════════════════════
 # ROUTE 3: /predict → Batch CSV Prediction
 # ══════════════════════════════════════════════════════════════════
+
+# ── ROUTE 3: predict page (GET) ──────────────────────────────────
 @app.get("/predict")
+async def predict_page(request: Request):
+    # IMP: GET /predict → form page dikhao
+    # POST /predict → actual prediction karo
+    return templates.TemplateResponse(request=request, name="predict.html")
+
+
+
+@app.post("/predict")
 async def predict_route(request: Request, file: UploadFile = File(...)):
     """
     CSV file upload karo → batch prediction → HTML table return
@@ -200,8 +210,9 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         table_html = df.to_html(classes="table table-striped")
 
         return templates.TemplateResponse(
-            "table.html",
-            {"request": request, "table": table_html}
+            request=request,
+            name="table.html",
+            context={"table": table_html}
         )
 
     except Exception as e:
@@ -256,6 +267,13 @@ class NetworkDataInput(BaseModel):
     Statistical_report:            int
 
 
+# ── ROUTE 4: manual predict page (GET) ───────────────────────────
+@app.get("/predict/manual")
+async def predict_manual_page(request: Request):
+    # IMP: GET /predict/manual → form page dikhao
+    return templates.TemplateResponse(request=request, name="predict_manual.html")
+
+# ── ROUTE 4b: manual predict POST ────────────────────────────────
 @app.post("/predict/manual")
 async def predict_manual(data: NetworkDataInput):
     """
@@ -295,7 +313,7 @@ async def predict_manual(data: NetworkDataInput):
             "label":      label,
             "message":    f"URL is classified as {label}"
         }
-
+    
     except Exception as e:
         raise NetworkSecurityException(e, sys)
 

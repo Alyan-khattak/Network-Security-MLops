@@ -258,10 +258,10 @@ class ModelTrainer:
         # ---------------- Define Models ----------------
         # IMP: verbose=0 set karo — verbose=1 bahut output karta hai
         models = {
-            "Random Forest"      : RandomForestClassifier(verbose=0),
+            "Random Forest"      : RandomForestClassifier(verbose=1),
             "Decision Tree"      : DecisionTreeClassifier(),
-            "Gradient Boosting"  : GradientBoostingClassifier(verbose=0),
-            "Logistic Regression": LogisticRegression(verbose=0),
+            "Gradient Boosting"  : GradientBoostingClassifier(verbose=1),
+            "Logistic Regression": LogisticRegression(verbose=1),
             "AdaBoost"           : AdaBoostClassifier(),
         }
 
@@ -368,6 +368,7 @@ class ModelTrainer:
         # ── SAVE NetworkModel ─────────────────────────────────────
         # IMP: preprocessor + model ek saath pkl mein save karo
         # PredictPipeline ek load se dono mil jaayenge
+        
         model_dir_path = os.path.dirname(
             self.model_trainer_config.trained_model_file_path
         )

@@ -12,4 +12,5 @@ fastapi
 uvicorn
 python-multipart
 dill
+huggingface_hub
 ## -e .

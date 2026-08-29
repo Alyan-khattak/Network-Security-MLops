@@ -137,23 +137,43 @@ async def index(request:Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
 
+
+
+# ══════════════════════════════════════════════════════════════════
+# ROUTE alpha: / → Get System Diagrams
+# ══════════════════════════════════════════════════════════════════
+@app.get("/diagrams")
+async def diagrams_page(request: Request):
+    return templates.TemplateResponse(request=request, name="diagrams.html")
+
+
+@app.get("/pipeline")
+async def pipeline_page(request:Request):
+    return templates.TemplateResponse(request=request, name="pipeline_explain.html")
+
+
 # ══════════════════════════════════════════════════════════════════
 # ROUTE 2: /train → Training Pipeline Trigger
 # ══════════════════════════════════════════════════════════════════
-@app.get("/train")
-async def train_route():
-    """
-    Poori training pipeline trigger karta hai.
-    MongoDB → Ingestion → Validation → Transformation → ModelTrainer
-    """
-    try:
-        logging.info("Training route called")
-        train_pipeline = TrainingPipeline()
-        train_pipeline.run_pipeline()
-        logging.info("Training pipeline completed via API")
-        return Response("Training is Successful")
-    except Exception as e:
-        raise NetworkSecurityException(e, sys)
+
+## I am Commenting this out so that Run API don't run the system
+## in UI homepage the run pipline button always run the system 
+## if you want tht functionality then un comment it 
+
+# @app.get("/train")
+# async def train_route():
+#     """
+#     Poori training pipeline trigger karta hai.
+#     MongoDB → Ingestion → Validation → Transformation → ModelTrainer
+#     """
+#     try:
+#         logging.info("Training route called")
+#         train_pipeline = TrainingPipeline()
+#         train_pipeline.run_pipeline()
+#         logging.info("Training pipeline completed via API")
+#         return Response("Training is Successful")
+#     except Exception as e:
+#         raise NetworkSecurityException(e, sys)
 
 
 # ══════════════════════════════════════════════════════════════════

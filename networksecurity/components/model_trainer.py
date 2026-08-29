@@ -52,6 +52,8 @@
 5: utils/ML_utils/metric/classification_metric.py :: is file me metric calculation k liye funcion defined h
 6: utils/ML_utils/model/estimator.py              :: is file mai model k prediction ka code likha hwa h, input data py precessor Apply krky predict krta h 
 
+7: cloud/hf_sync.py :: is file final_model to Hugging face pr push krny ka code likha Hwa h 
+
 7:loggin/logger.py :: logging defined h 
 8: exception/exception.py :: exception defined h 
  
@@ -177,6 +179,9 @@ from networksecurity.utils.ML_utils.metric.classification_metric import get_clas
 from networksecurity.utils.ML_utils.model.estimator import NetworkModel
 # NetworkModel → preprocessor + model ek object mein wrap karta hai
 
+from networksecurity.cloud.hf_syncer import push_model_to_huggingface
+#To Push Model to Hugging face 
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -241,7 +246,7 @@ class ModelTrainer:
             mlflow.log_metric("precision_score",  precision_score)
             mlflow.log_metric("recall_score",     recall_score)
 
-            # BUG FIXED: mlflow.sklearn.load_model → log_model
+    
             # load_model loads a model — log_model saves it to MLflow
             mlflow.sklearn.log_model(best_model, name="model")
             logging.info(
@@ -405,6 +410,9 @@ class ModelTrainer:
             file_path=os.path.join(FINAL_MODEL_DIR, "preprocessor.pkl"),
             obj=preprocessor
         )
+
+        ### ==>> Pushing Model Too Hugging Face 
+        push_model_to_huggingface() # code for this is written in cloud/hf_sync.py
 
 
         # ── ARTIFACT BANAO ────────────────────────────────────────

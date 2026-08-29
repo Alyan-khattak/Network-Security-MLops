@@ -241,6 +241,6 @@ MODEL_TRAINER_OVERFITTING_UNDER_FITTING_THRESHOLD: float = 0.05
 # Pushing Models to HuggingFace
 # ─────────────────────────────────────────────────────────────────
 # constants/training_pipeline/__init__.py mein add karo
-HF_REPO_ID:   str = "Alyan-khattak/networksecurity-mlops"
+HF_REPO_ID:   str = "alyan-ktk/networksecurity-mlops"
 HF_REPO_TYPE: str = "model"
 HF_MODEL_DIR: str = "final_model/"

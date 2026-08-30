@@ -16,7 +16,7 @@
 
 | Resource | URL |
 |---|---|
-| **Live Demo** | [live url here] |
+| **Live Demo** |[](https://network-security-mlops-production.up.railway.app/) |
 | **DockerHub** | [hub.docker.com/r/alyanktk/networksecurity-mlops](https://hub.docker.com/r/alyanktk/networksecurity-mlops) |
 | **MLflow / DagsHub** | [dagshub.com/Alyan-khattak/Network-Security-MLops](https://dagshub.com/Alyan-khattak/Network-Security-MLops) |
 | **Hugging Face** | [huggingface.co/alyan-ktk/networksecurity-mlops](https://huggingface.co/alyan-ktk/networksecurity-mlops) |

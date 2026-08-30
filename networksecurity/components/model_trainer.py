@@ -191,6 +191,13 @@ from sklearn.ensemble import (
     RandomForestClassifier
 )
 
+'''
+I commented this part and put this code in Track_flow function
+why ? -> b/c i am depolying on Rainway and its giving errors 
+Kyunki training_pipeline.py → model_trainer.py import karta hai → dagshub.init() module load hote hi run hota hai — chahe /train call ho ya na ho.
+and I dont wanna add my credentionals there -> So if you are running locally uncomment this and comment these lines ml_flow track function 
+
+
 # Initailization DagsHub
 # To see what is DagsHub and Mlflow see the file :: MLflow_Beginner_Guide.md
 import dagshub
@@ -199,6 +206,7 @@ dagshub.init(repo_owner='Alyan-khattak', repo_name='Network-Security-MLops', mlf
 #DagsHUb is like gthub , You connect ur github repo with DagsHUb
 #then when you run the MLFlow Experiments are track over there, you can see it in dagshub experiments Sections
 
+'''
 
 # ── MAIN CLASS ────────────────────────────────────────────────────
 class ModelTrainer:
@@ -238,6 +246,15 @@ class ModelTrainer:
             classificationmetric   : ClassificationMetricArtifact (f1, precision, recall)
         """
         with mlflow.start_run():
+
+            # Initailization DagsHub
+            # To see what is DagsHub and Mlflow see the file :: MLflow_Beginner_Guide.md
+            import dagshub
+            dagshub.init(repo_owner='Alyan-khattak', repo_name='Network-Security-MLops', mlflow=True)
+            #MLflow tracks your ML Experiments 
+            #DagsHUb is like gthub , You connect ur github repo with DagsHUb
+            #then when you run the MLFlow Experiments are track over there, you can see it in dagshub experiments Sections
+
             f1_score        = classificationmetric.f1_score
             precision_score = classificationmetric.precision_score
             recall_score    = classificationmetric.recall_score

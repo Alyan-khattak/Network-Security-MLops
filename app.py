@@ -127,6 +127,71 @@ app.add_middleware(
 # ─────────────────────────────────────────────────────────────────
 
 
+
+
+
+
+
+# ── STARTUP EVENT ─────────────────────────────────────────────────
+# WHY THIS IS NEEDED:
+# final_model/ gitignore mein hai → Railway/Render pe nahi hoti
+# bina model ke /predict → FileNotFoundError crash karega
+#
+# DO OPTIONS THE:
+#
+# Option 1 (yeh wala) → HuggingFace se download karo on startup
+#   Pros: automatic, no manual step, model registry best practice
+#   Cons: first startup slow hoga (download time)
+#
+# Option 2 → /train route call karo deployment ke baad
+#   Browser mein: https://your-app.railway.app/train
+#   Pipeline run hogi → final_model/ ban jayegi
+#   Pros: latest model ban jayega
+#   Cons: manual step, MongoDB connection chahiye, time lagta hai
+#
+# IMP: agar HuggingFace pe model push nahi kiya tha →
+#      pehle locally run karo: PYTHONPATH=. python main.py
+#      phir model automatically HF pe push ho jayega
+#      phir deploy karo
+# ─────────────────────────────────────────────────────────────────
+
+from networksecurity.cloud.hf_syncer import pull_model_from_huggingface
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    App start hone pe automatically model download karta hai.
+    final_model/ exist kare toh skip karo — warna HF se pull karo.
+
+    FLOW:
+    Railway/Render deploy
+        ↓ uvicorn starts
+        ↓ startup_event() trigger
+        ↓ final_model/model.pkl exist?
+            YES → skip (local dev mein already hai)
+            NO  → pull_model_from_huggingface()
+                  → HF se model.pkl + preprocessor.pkl download
+                  → final_model/ mein save
+        ↓ /predict routes ready 
+    """
+    if not os.path.exists("final_model/model.pkl"):
+        # IMP: file check karo — agar already hai toh download mat karo
+        # local development mein final_model/ hoti hai → skip
+        # Railway/Render pe nahi hoti → download
+        logging.info("final_model/model.pkl not found")
+        logging.info("Downloading models from HuggingFace Hub...")
+        pull_model_from_huggingface()
+        # pull_model_from_huggingface() → hf_syncer.py mein defined
+        # snapshot_download(repo_id, local_dir="final_model/")
+        # → model.pkl + preprocessor.pkl download hote hain
+        logging.info("Models downloaded successfully → final_model/ ready")
+    else:
+        # local machine pe already final_model/ hai → skip download
+        logging.info("final_model/ already exists → skipping HF download")
+
+
+
+
 # ══════════════════════════════════════════════════════════════════
 # ROUTE 1: / → Swagger UI Redirect
 # ══════════════════════════════════════════════════════════════════
